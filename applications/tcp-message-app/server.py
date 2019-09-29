@@ -2,51 +2,80 @@ import socket
 import pickle
 from _thread import *
 import threading
+
 lock = threading.Lock()
 
+global_array = {}
+sort_data = {}
 
-HOST = '127.0.0.1'
-PORT = 17865
-MAX_NUM_CONNECTIONS = 5
 
-print("Server Info")
-print("IP Address: " + HOST)
-server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-try:
-    server.bind((HOST, PORT))
-except socket.error as e:
-    print((str(e)))
-server.listen(MAX_NUM_CONNECTIONS)
-print("port listening: " + str(PORT))
-print("waiting for connections...")
-
-while True:
-    try:
-        client_sock, addr = server.accept()
-        client_id = addr[1]
-        #print("Client " + str(client_id)+" has connected")
-        cid = pickle.dumps(client_id)
-        client_sock.sendall(cid)
-        while True:
+def thread(client_sock):
+    #lock.acquire()
+    while True:
+        data_from_client_string = client_sock.recv(4096)
+        data_from_client = pickle.loads(data_from_client_string)
+        if not data_from_client:
+            print("Disconnect from server")
+            break
+        if data_from_client['option'] == "1":
+            userList = ""
+            for user_value in global_array.values():
+                userList = userList + " " + user_value
+            #client_sock.send(str.encode(userList))
+            client_sock.send(pickle.dumps(userList))
+            return 0
+        if data_from_client['opition'] == "2":
+            client_id = data_from_client['userId']
+            msg = data_from_client['msgs']
+            sort_data[0] = client_id
+            if client_id in sort_data:
+                sort_data[client_id] = sort_data[client_id].append(msg)
+            else:
+                sort_data[client_id] = [msg]
+        if data_from_client[0] == "3":
+            print("In 3")
             try:
-                data_from_client = client_sock.recv(4096)
-                data = pickle.loads(data_from_client)
-                print("Client " + data + " with clientid: " + str(client_id) + " has connected to this server")
+                client, addr = client_sock.accept()
+                server_host = addr[0]
+                client_id = addr[1]
+                msgs = sort_data[client_id]
+                client_sock.send(msgs)
             except:
                 client_sock.close()
-    except:
-        server.close()
-
-            #request_from_client = client_sock.recv(4096)
-            #data = pickle.loads(request_from_client)
-            #client_msg = data['msg_from_client']
-            #ID = data['Id_from_client']
-            #print("Client says: "+client_msg)
-            #server_msg = "Hello from server!"
-            #server_response = {"client_id": client_id, "msg_from_server": server_msg}
-            #server_serialized = pickle.dumps(server_response)
-            #client_sock.send(server_serialized)
-            #client_sock.close()
+        # serialized_data = pickle.loads(data_from_client)
+        #client_sock.send(data_from_client)
+    #lock.release()
+    client_sock.close()
 
 
+def Main():
+    while True:
+        HOST = '127.0.0.1'
+        PORT = 17865
+        print("Server Info")
+        print("IP Address: " + HOST)
+        print("port listening: " + str(PORT))
+        print("waiting for connections...")
+        MAX_NUM_CONNECTIONS = 5
+        server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        server.bind((HOST, PORT))
+        server.listen(MAX_NUM_CONNECTIONS)
+        while True:
+            try:
+                client_sock, addr = server.accept()
+                client_id = addr[1]
+                cid = pickle.dumps(client_id)
+                client_sock.sendall(cid)
+                data_from_client = client_sock.recv(4096)
+                serialized_data = pickle.loads(data_from_client)
+                if client_id not in global_array:
+                    global_array[client_id] = serialized_data
+                start_new_thread(thread, (client_sock,))
+                print("Client " + serialized_data + " with clientid: " + str(client_id) + " has connected to this server")
+            except:
+                print("Reach the maximum number of 5 people")
+                break
 
+
+if __name__ == '__main__':
+    Main()
