@@ -49,22 +49,18 @@ class TCPClientHandler(object):
         msg = input("Your message: ")
         otheruserId = input("userID recipent: ")
         listMsg = {'option': "2", 'userId': otheruserId, 'msgs': msg}
-        #print("ListMsg is:" + listMsg)
-        msgs = ':'.join(listMsg)
-        sock.send(pickle.dumps(msgs))
+        sock.send(pickle.dumps(listMsg))
         print("Message sent!")
         return 0
 
     def getmessagefromserver(self, sock):
         #sock.send(str.encode("3"))
-        getMsgs = {'option': "3", 'client_id': "03090", 'msgs': "NotAMessage"}
-        msgs = ':'.join(getMsgs)
-        print(msgs)
-        sock.send(str.encode(msgs))
-        print("before msg")
+        getMsgs = {'option': "3", 'userId': "03090", 'msgs': "NotAMessage"}
+        sock.send(pickle.dumps(getMsgs))
         msg = sock.recv(4096)
         print("Message:")
-        print(msg)
+        print(pickle.loads(msg))
+        print("in 3 test")
         return 0
 
     def createnewchannel(self):

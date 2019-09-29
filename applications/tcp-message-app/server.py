@@ -9,7 +9,7 @@ global_array = {}
 sort_data = {}
 
 
-def thread(client_sock):
+def thread(client_sock, client_id_fm):
     #lock.acquire()
     while True:
         data_from_client_string = client_sock.recv(4096)
@@ -24,7 +24,7 @@ def thread(client_sock):
             #client_sock.send(str.encode(userList))
             client_sock.send(pickle.dumps(userList))
             return 0
-        if data_from_client['opition'] == "2":
+        if data_from_client['option'] == "2":
             client_id = data_from_client['userId']
             msg = data_from_client['msgs']
             sort_data[0] = client_id
@@ -32,14 +32,15 @@ def thread(client_sock):
                 sort_data[client_id] = sort_data[client_id].append(msg)
             else:
                 sort_data[client_id] = [msg]
-        if data_from_client[0] == "3":
-            print("In 3")
+            return 0
+        if data_from_client['option'] == "3":
             try:
-                client, addr = client_sock.accept()
-                server_host = addr[0]
-                client_id = addr[1]
-                msgs = sort_data[client_id]
-                client_sock.send(msgs)
+               # client, addr = client_sock.accept()
+                #server_host = addr[0]
+                #client_id = addr[1]
+                msgs = sort_data[client_id_fm]
+                client_sock.send(pickle.dumps(msgs))
+                sort_data.pop(client_id_fm)
             except:
                 client_sock.close()
         # serialized_data = pickle.loads(data_from_client)
@@ -70,7 +71,7 @@ def Main():
                 serialized_data = pickle.loads(data_from_client)
                 if client_id not in global_array:
                     global_array[client_id] = serialized_data
-                start_new_thread(thread, (client_sock,))
+                start_new_thread(thread, (client_sock, client_id))
                 print("Client " + serialized_data + " with clientid: " + str(client_id) + " has connected to this server")
             except:
                 print("Reach the maximum number of 5 people")
