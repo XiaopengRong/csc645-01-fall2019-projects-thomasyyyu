@@ -55,7 +55,7 @@ class TCPClientHandler(object):
 
     def getmessagefromserver(self, sock):
         #sock.send(str.encode("3"))
-        getMsgs = {'option': "3", 'userId': "03090", 'msgs': "NotAMessage"}
+        getMsgs = {'option': "3", 'userId': "12345", 'msgs': "NotAMessage"}
         sock.send(pickle.dumps(getMsgs))
         msg = sock.recv(4096)
         print("Message:")
