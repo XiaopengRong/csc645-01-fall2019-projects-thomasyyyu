@@ -2,6 +2,7 @@ import socket
 import pickle
 from _thread import *
 import threading
+from time import time, ctime
 
 lock = threading.Lock()
 
@@ -10,7 +11,6 @@ sort_data = {" ": [" "]}
 
 
 def thread(client_sock, client_id_fm):
-    #lock.acquire()
     while True:
         data_from_client_string = client_sock.recv(4096)
         data_from_client = pickle.loads(data_from_client_string)
@@ -20,35 +20,25 @@ def thread(client_sock, client_id_fm):
         if data_from_client['option'] == "1":
             userList = ""
             for user_keys, user_value in global_array.items():
-                    userList = userList + str(user_keys) + " " + user_value
+                userList = userList + str(user_keys) + ": " + user_value + "\n"
             client_sock.send(pickle.dumps(userList))
         elif data_from_client['option'] == "2":
             client_id = data_from_client['userId']
             msg = data_from_client['msgs']
-            #sort_data[0] = client_id
             if client_id in sort_data:
                 sort_data[client_id].append(msg)
             else:
                 sort_data[client_id] = [msg]
         elif data_from_client['option'] == "3":
-            #try:
-                #client, addr = client_sock.accept()
-                #server_host = addr[0]
-                #client_id = addr[1]
             if str(client_id_fm) in sort_data:
                 msgL = sort_data[str(client_id_fm)]
                 client_sock.send(pickle.dumps(msgL))
-                #sort_data.pop(client_id_fm)
             else:
                 msgsL = ["not_found_message_in_sort_data"]
                 client_sock.send(pickle.dumps(msgsL))
-            #print("in server 3: " + msgsL)
 
         elif data_from_client['option'] == "4":
             print("in 4")
-        # serialized_data = pickle.loads(data_from_client)
-        #client_sock.send(data_from_client)
-    #lock.release()
     client_sock.close()
 
 
