@@ -59,14 +59,22 @@ class TCPClientHandler(object):
         sock.send(pickle.dumps(getMsgs))
         msg = sock.recv(4096)
         print("Message:")
+        #print(msg)
         print(pickle.loads(msg))
         print("in 3 test")
         return 0
 
-    def createnewchannel(self):
+    def createnewchannel(self, sock):
+        sock.send(pickle.dumps({'option': "4", 'userId': "None", 'msg': "msg"}))
+        host = input("Enter the ip address of the new channel: ")
+        port = input("Enter the port to listen for new users: ")
+        newServer = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        port = int(port)
+        newServer.bind((host, port))
+        newServer.listen()
+        print("Waiting for users....")
         return 0
     def p2pconnect(self):
         return 0
     def disconnectserver(self):
-
         return 0
