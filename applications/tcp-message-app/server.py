@@ -8,7 +8,7 @@ lock = threading.Lock()
 
 global_array = {}
 sort_data = {" ": [" "]}
-
+client_id_name = {" ": ""}
 
 def thread(client_sock, client_id_fm):
     while True:
@@ -36,9 +36,21 @@ def thread(client_sock, client_id_fm):
             else:
                 msgsL = ["not_found_message_in_sort_data"]
                 client_sock.send(pickle.dumps(msgsL))
-
         elif data_from_client['option'] == "4":
-            print("in 4")
+            client_id = data_from_client['userId']
+            client_name = data_from_client['client_name']
+            if client_id not in client_id_name:
+                client_id_name[client_id].append(client_name)
+            client_sock.send(pickle.dumps(client_id_name))
+        elif data_from_client['option'] == "5":
+            client_id = data_from_client['userId']
+            client_name = data_from_client['client_name']
+            if client_id not in client_id_name:
+                client_id_name[client_id].append(client_name)
+            client_sock.send(pickle.dumps(client_id_name))
+        elif data_from_client['option'] == "6":
+            print("In 6")
+
     client_sock.close()
 
 

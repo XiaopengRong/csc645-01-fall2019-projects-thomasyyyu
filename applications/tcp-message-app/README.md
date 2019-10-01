@@ -1,8 +1,8 @@
 # Multithreaded Client/Server TCP Message APP With Primitive Sockets. 
-   * Your name and student id
-   * Project name
-   * Project description
-   * Project purpose
-   * Clear instructions about how to clone/download/install/execute the project
-   * Compatibility issues
-   * A paragrah or two about what challenges you have faced in this assignment, and what you have learned from it.
+   * Thomas Yu, 916984372
+   * Multithreaded Client/Server TCP Message APP With Primitive Sockets.
+   * Using TCP/IP and python to create a small chatting app so that user can exhchange message through the app
+   * To know about TCP/IP AND Multithreaded
+   * Simply using git Clone to get repos
+   * concept that learn how to transfer data and know the data structure between client and server
+   * 
