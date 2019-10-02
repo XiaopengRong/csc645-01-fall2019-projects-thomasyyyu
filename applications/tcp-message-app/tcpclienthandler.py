@@ -1,7 +1,10 @@
 import socket
 import pickle
+from _thread import *
+import threading
 from time import time, ctime
 
+client_message = {" ": [ ]}
 
 class TCPClientHandler(object):
     def __init__(self, client):
@@ -25,10 +28,12 @@ class TCPClientHandler(object):
         print(pickle.loads(userList))
         return 0
 
-    def sendmessagetouser(self, sock):
+    def sendmessagetouser(self, sock, date, clientName):
         msg = input("Your message: ")
         otheruserId = input("userID recipent: ")
+        msg += (" " + str(date) + "   (from: "+clientName+")")
         listMsg = {'option': "2", 'userId': otheruserId, 'msgs': msg}
+        print(listMsg)
         sock.send(pickle.dumps(listMsg))
         print("Message sent!")
         return 0
@@ -38,8 +43,8 @@ class TCPClientHandler(object):
         sock.send(pickle.dumps(getMsgs))
         msg = sock.recv(4096)
         print("My Message:")
-
-        print(pickle.loads(msg))
+        myMsgs = pickle.loads(msg)
+        print(*myMsgs, sep="\n")
         return 0
 
     def createnewchannel(self, sock, client_id, client_name, host, port):
