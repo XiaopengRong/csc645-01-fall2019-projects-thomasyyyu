@@ -31,9 +31,9 @@ class TCPClientHandler(object):
     def sendmessagetouser(self, sock, date, clientName):
         msg = input("Your message: ")
         otheruserId = input("userID recipent: ")
-        msg += (" " + str(date) + "   (from: "+clientName+")")
+        msg += (" " + "  (from: "+clientName+")" + str(date) )
         listMsg = {'option': "2", 'userId': otheruserId, 'msgs': msg}
-        print(listMsg)
+        #print(listMsg)
         sock.send(pickle.dumps(listMsg))
         print("Message sent!")
         return 0
@@ -47,26 +47,45 @@ class TCPClientHandler(object):
         print(*myMsgs, sep="\n")
         return 0
 
-    def createnewchannel(self, sock, client_id, client_name, host, port):
-        sock.send(pickle.dumps({'option': "4", 'userId': client_id, 'client_name': client_name}))
+    def createnewchannel(self, socket, host, port, client_name):
+        #socket.listen(100)
+        print("Channel Info:")
+        print("IP Address: " + host)
+        print("Channel Clientid:" + str(port))
+        print("Waiting for users....")
+        client_sock, addr = socket.accept()
+        print("UserId " + str(addr[1])+"connected to the channel")
+        print("Enter Bye to exit the channel")
+        #client_sock.connect((host, port))
         while True:
-            newServer = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            port = int(port)
-            newServer.bind((host, port))
-            newServer.listen(1)
-            print("Waiting for users....")
-            username = sock.recv(4096)
-            message = newServer.recv(4096)
-            if username:
-                print("Userid:" + pickle.loads(username[0])+"connected to the channel")
-                print("Enter bye to exit the channel")
-            if message:
-                print(pickle.loads(client_name) + ": " + pickle.loads(message))
-            elif pickle.loads(message) is "bye":
-                newServer.close()
-    def p2pconnect(self, sock, client_id, client_name, new_socket):
-        sock.send(pickle.dumps({'option': "5", 'userId': client_id, 'username': client_name}))
-        message = input("please enter your message: ")
-        new_socket.send(pickle.dumps(message))
+            client_Meg = client_sock.recv(4096)
+            clientMeg_decode = pickle.loads(client_Meg)
+            if clientMeg_decode == "bye":
+                print(client_name + ": "+clientMeg_decode)
+                print("Client Disconnected!")
+                break
+
+            user_input = input(client_name+": ")
+            if user_input == "bye":
+                print("You have disconnect server")
+                break
+            user_encode = pickle.dumps(user_input)
+            client_sock.send(user_encode)
+    def p2pconnect(self):
+        connectHost = input("Enter the ip address of the channel you would like to connect:")
+        connectPort = input("Enter the channel port: ")
+        connectPort = int(connectPort)
+        client_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        client_sock.connect((connectHost, connectPort))
+        print("Successfully connected to the channel " + str(connectPort))
+        print("Enter 'Bye' to close the chat.")
+        while True:
+            client_input = input("please input message: ")
+            if client_input == "bye":
+                break
+            client_encode = pickle.dumps(client_input)
+            client_sock.send(client_encode)
+            client_income_message = client_sock.recv(4096)
+            print(pickle.loads(client_income_message))
     def disconnectserver(self, sock):
         return 0
