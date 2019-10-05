@@ -32,7 +32,7 @@ class TCPClientHandler(object):
     def sendmessagetouser(self, sock, date, clientName):
         msg = input("Your message: ")
         otheruserId = input("userID recipent: ")
-        msg += (" " + "  (from: "+clientName+")" + str(date) )
+        msg += (" " + "  (from: "+clientName+")" + str(date))
         listMsg = {'option': "2", 'userId': otheruserId, 'msgs': msg}
         #print(listMsg)
         sock.send(pickle.dumps(listMsg))
@@ -48,7 +48,7 @@ class TCPClientHandler(object):
         print(*myMsgs, sep="\n")
         return 0
 
-    def createnewchannel(self, socket, host, port, client_name, user_name):
+    def createnewchannel(self, socket, host, port, client_name):
         #socket.listen(100)
         print("Channel Info:")
         print("IP Address: " + host)
@@ -76,7 +76,7 @@ class TCPClientHandler(object):
                 print("Client Disconnected!")
                 break
 
-    def p2pconnect(self, client_name, user_name):
+    def p2pconnect(self, client_name):
         connectHost = input("Enter the ip address of the channel you would like to connect:")
         connectPort = input("Enter the channel port: ")
         connectPort = int(connectPort)
@@ -105,5 +105,16 @@ class TCPClientHandler(object):
                 print("Other user exit channel")
                 break
 
-    def disconnectserver(self, sock, new_sock):
-        return 0
+    def disconnectserver(self, sock, user_id):
+        getSock = {'option': "6", 'userid': user_id, 'usersock': sock}
+        getSock = pickle.dumps(str(getSock))
+        sock.send(getSock)
+        while True:
+            data_from_user = sock.recv(4096)
+            data_from_user = pickle.loads(data_from_user)
+            data_from_user[0].close()
+            if data_from_user[0].close():
+                del data_from_user[0]
+                print("User"+data_from_user[1]+"has Disconnected")
+            else:
+                print("disconnect failed")

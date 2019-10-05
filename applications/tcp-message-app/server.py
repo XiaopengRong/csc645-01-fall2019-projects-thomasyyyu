@@ -7,7 +7,7 @@ lock = threading.Lock()
 
 global_array = {}
 sort_data = {" ": [" "]}
-client_id_name = {" ": [""]}
+client_id_name = {}
 
 def thread(client_sock, client_id_fm):
     while True:
@@ -42,8 +42,12 @@ def thread(client_sock, client_id_fm):
         elif data_from_client['option'] == "5":
             print("in 5")
         elif data_from_client['option'] == "6":
-            print("In 6")
-
+            data_from_client['userid'] = client_id_fm
+            data_from_client['sock'] = client_sock
+            client_id_name[client_sock] = client_id
+            sorted_data = pickle.dumps(client_id_name)
+            client_sock.send(sorted_data)
+            print("Client"+client_id+" Disconned from server")
     client_sock.close()
 
 
