@@ -4,7 +4,8 @@ from _thread import *
 import threading
 from time import time, ctime
 
-client_message = {" ": [ ]}
+user_name_msg = {}
+user_name_msg1 = {}
 
 class TCPClientHandler(object):
     def __init__(self, client):
@@ -47,7 +48,7 @@ class TCPClientHandler(object):
         print(*myMsgs, sep="\n")
         return 0
 
-    def createnewchannel(self, socket, host, port, client_name):
+    def createnewchannel(self, socket, host, port, client_name, user_name):
         #socket.listen(100)
         print("Channel Info:")
         print("IP Address: " + host)
@@ -58,20 +59,24 @@ class TCPClientHandler(object):
         print("Enter Bye to exit the channel")
         #client_sock.connect((host, port))
         while True:
-            client_Meg = client_sock.recv(4096)
-            clientMeg_decode = pickle.loads(client_Meg)
-            if clientMeg_decode == "bye":
-                print(client_name + ": "+clientMeg_decode)
+            try:
+                userMeg = client_sock.recv(4096)
+                userMeg_decode = pickle.loads(userMeg)
+                for x, y in userMeg_decode.items():
+                    print(x+": " + y)
+                user_input = input(str(client_name) + ": ")
+                user_input = str(user_input)
+                user_name_msg[client_name] = user_input
+                if "bye" in user_input:
+                    print("You have disconnect server")
+                    break
+                user_encode = pickle.dumps(user_name_msg)
+                client_sock.send(user_encode)
+            except:
                 print("Client Disconnected!")
                 break
 
-            user_input = input(client_name+": ")
-            if user_input == "bye":
-                print("You have disconnect server")
-                break
-            user_encode = pickle.dumps(user_input)
-            client_sock.send(user_encode)
-    def p2pconnect(self):
+    def p2pconnect(self, client_name, user_name):
         connectHost = input("Enter the ip address of the channel you would like to connect:")
         connectPort = input("Enter the channel port: ")
         connectPort = int(connectPort)
@@ -80,12 +85,25 @@ class TCPClientHandler(object):
         print("Successfully connected to the channel " + str(connectPort))
         print("Enter 'Bye' to close the chat.")
         while True:
-            client_input = input("please input message: ")
-            if client_input == "bye":
+            try:
+                client_in = input(str(client_name) + ": ")
+                client_in = str(client_in)
+                user_name_msg1[client_name] = client_in
+                if "bye" in client_in:
+                    print("You have disconnect server")
+                    break
+                client_encode = pickle.dumps(user_name_msg1)
+                client_sock.send(client_encode)
+                client_income_message = client_sock.recv(4096)
+                client_income_message_decode = pickle.loads(client_income_message)
+                if "bye" in client_income_message_decode:
+                    print("Other user disconnect channel")
+                    break
+                for x, y in client_income_message_decode.items():
+                    print(x+": " + y)
+            except:
+                print("Other user exit channel")
                 break
-            client_encode = pickle.dumps(client_input)
-            client_sock.send(client_encode)
-            client_income_message = client_sock.recv(4096)
-            print(pickle.loads(client_income_message))
-    def disconnectserver(self, sock):
+
+    def disconnectserver(self, sock, new_sock):
         return 0
