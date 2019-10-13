@@ -1,6 +1,6 @@
 # Streaming Video Server and Client. Functionality Similar to Netflix
-   * Your name and student id
-   * Project name
+   * Name: Thomas Yu, Student ID: 916984372
+   * Web-server-proxy
    * Project description
    * Project purpose
    * Clear instructions about how to clone/download/install/execute the project
