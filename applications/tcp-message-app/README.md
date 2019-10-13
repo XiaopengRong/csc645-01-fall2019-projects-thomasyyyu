@@ -22,6 +22,8 @@ TypeError: createnewchannel() takes 5 positional arguments but 6 were given
    ```
    * Thomas, I know you worked hard in this assignment but since I cannot grade options 4 and 5, I cannot give you more points. Normally, in this situation your grade would be 75 points, but I know you deserved more points because of all the effort put in the assignment, that is why I gave you 10 more points. 
    
+   * Docs not completed
+   
    
    
    #
