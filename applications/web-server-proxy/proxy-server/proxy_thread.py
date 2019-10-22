@@ -2,7 +2,7 @@
 Proxy thread file. Implements the proxy thread class and all its functionality. 
 """
 
-from proxy_manager import ProxyManager
+from .proxy_manager import ProxyManager
 import pickle
 # IMPORTANT READ BELOW NOTES. Otherwise, it may affect negatively your grade in this assignment
 # Note about requests library
@@ -33,6 +33,7 @@ class ProxyThread(object):
         and then proccess the request done by the client
         :return: VOID
         """
+
         return 0
 
     def client_id(self):

@@ -100,6 +100,7 @@ class ProxyManager:
         :param password: 
         :return: 
         """
+        
         return 0
 
     def is_manager(self, email, password):

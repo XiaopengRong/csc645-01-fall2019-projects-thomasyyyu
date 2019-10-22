@@ -1,5 +1,6 @@
 import socket
 import pickle
+import requests
 
 class Client(object):
     """
@@ -9,13 +10,15 @@ class Client(object):
 
     def __init__(self):
         self.init_socket()
+        self.client_socket = None
+
+    def run(self, data):
+
+        return 0
 
     def init_socket(self):
-        try:
-            self.client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            print("Socket successfully created")
-        except socket.error as err:
-            print("socket creation failed with error %s" % err)
+        self.client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        return 0
 
     def _connect_to_server(self, host_ip, port):
         """
@@ -25,6 +28,12 @@ class Client(object):
         :param port: 
         :return: VOID
         """
+        try:
+            self.init_socket()
+            self.client_socket.connect((host_ip, port))
+            print("Socket successfully connected")
+        except socket.error as err:
+            print("socket connection failed with error %s" % err)
         return 0
 
     def _send(self, data):
@@ -34,6 +43,8 @@ class Client(object):
         :param data: {url: url, private_mode: True or false}
         :return: VOID
         """
+        serialized_data = pickle.dumps(data)
+        self.client_socket.send(serialized_data)
         return 0
 
     def _receive(self):
@@ -42,7 +53,9 @@ class Client(object):
         2. Desirialize data after it is recieved
         :return: the desirialized data 
         """
-        return 0
+        serialized_data = self.client_socket.recv(4096)
+        data = pickle.loads(serialized_data)
+        return data
 
     def request_to_proxy(self, data):
         """
@@ -52,6 +65,7 @@ class Client(object):
         :param data: url and private mode 
         :return: VOID
         """
+        
         return 0
 
     def response_from_proxy(self):
@@ -62,4 +76,3 @@ class Client(object):
         :return: the response from the proxy server
         """
         return 0
-

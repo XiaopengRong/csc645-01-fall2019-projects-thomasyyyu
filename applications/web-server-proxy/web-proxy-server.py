@@ -24,6 +24,11 @@ def get_user_input():
     if "proxy-settings" in url:
         return proxy_settings()
     data = {'url': url, 'is_private_mode': is_private_mode}
+    # client = Client(data)
+    # client.run()
+    # client.send_request()
+    # response = client.get_response()
+    # render(response)
     return str(data)
 
 

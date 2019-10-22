@@ -1,5 +1,5 @@
 import os, sys, _thread, socket
-from proxy_thread import ProxyThread
+from .proxy_thread import ProxyThread
 
 
 class ProxyServer(object):
@@ -13,19 +13,27 @@ class ProxyServer(object):
 
     def run(self):
         try:
+            my_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            my_sock.bind((self.HOST, self.PORT))
+            my_sock.listen(self.BACKLOG)
+            print("Socket listening...")
+            while True:
+                self.accept_clients(my_sock)
             # create a socket
             # associate the socket to host and port
             # listen and accept clients
-            print("Dummy print statement to avoid complile errors in the template. Remove it later")
         except socket.error as message:
             print(message)
 
-    def accept_clients(self):
+    def accept_clients(self, sock):
         """
         Accept clients that try to connect. 
        :return: 
         """
-        return 0
+        client_sock, addr = sock.accept()
+        client_id = addr[1]
+        if client_id not in self.clients:
+            self.clients[client_id].append(client_sock)
 
     def proxy_thread(self, conn, client_addr):
         """
