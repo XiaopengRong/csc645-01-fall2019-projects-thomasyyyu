@@ -65,7 +65,7 @@ class Client(object):
         :param data: url and private mode 
         :return: VOID
         """
-        
+
         return 0
 
     def response_from_proxy(self):
