@@ -1,5 +1,5 @@
 import os, sys, _thread, socket
-from .proxy_thread import ProxyThread
+from proxy_thread import ProxyThread
 
 
 class ProxyServer(object):
@@ -32,8 +32,8 @@ class ProxyServer(object):
         """
         client_sock, addr = sock.accept()
         client_id = addr[1]
-        if client_id not in self.clients:
-            self.clients[client_id].append(client_sock)
+        print("Client_id is :" + str(client_id))
+        
 
     def proxy_thread(self, conn, client_addr):
         """
@@ -48,6 +48,7 @@ class ProxyServer(object):
         """
         proxy_thread = ProxyThread(conn, client_addr)
         proxy_thread.init_thread()
+        return
 
 
 server = ProxyServer()

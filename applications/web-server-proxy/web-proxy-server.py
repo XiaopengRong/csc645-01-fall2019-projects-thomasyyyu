@@ -1,6 +1,7 @@
-from flask import Flask
 from flask import Flask, render_template, request, redirect
+from client.client import Client
 import requests
+
 
 app = Flask(__name__)
 
@@ -24,11 +25,10 @@ def get_user_input():
     if "proxy-settings" in url:
         return proxy_settings()
     data = {'url': url, 'is_private_mode': is_private_mode}
-    # client = Client(data)
-    # client.run()
-    # client.send_request()
-    # response = client.get_response()
-    # render(response)
+    client = Client()
+    client.run(data)
+    client.response_from_proxy()
+    #render_template(response)
     return str(data)
 
 

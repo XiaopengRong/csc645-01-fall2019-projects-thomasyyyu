@@ -63,8 +63,10 @@ class ProxyManager:
         check = False
         list_from_admin = self.list_of_admins()
         temp_dic = {'email': email, 'passw': passw}
-        if email in list_from_admin:
+        if temp_dic['email'] in list_from_admin:
             check = True
+        else:
+            print("Not an Administrator")
         return check
 
     def add_site_blocked(self, request):
@@ -73,6 +75,7 @@ class ProxyManager:
         request: 
         :return: VOID
         """
+
         return 0
 
     def get_blocked_site(self, request):
@@ -88,6 +91,7 @@ class ProxyManager:
         :param request: 
         :return: true if the site is blocked, otherwise, false
         """
+
         return 0
 
     def add_manager(self, email, password):
@@ -112,6 +116,7 @@ class ProxyManager:
         :param password: 
         :return: True is the employee is upper management, otherwise, returns false
         """
+
         return 0
 
     def is_cached(self, request):
@@ -124,6 +129,7 @@ class ProxyManager:
         request: the request data from the client 
         :return: if the url is cached return true. Otherwise, false
         """
+
         return 0
 
     def get_cached_resource(self, request):
@@ -134,6 +140,7 @@ class ProxyManager:
         request: the request data from the client 
         :return: The resource requested
         """
+
         return 0
 
     def clear_cache(self):
@@ -141,6 +148,7 @@ class ProxyManager:
         
         :return: VOID
         """
+
         return 0
 
     def clear_history(self):
@@ -148,6 +156,7 @@ class ProxyManager:
         
         :return: VOID
         """
+
         return 0
 
     def clear_all(self):
@@ -156,4 +165,5 @@ class ProxyManager:
         2. execute clear_history
         :return: VOID
         """
+
         return 0

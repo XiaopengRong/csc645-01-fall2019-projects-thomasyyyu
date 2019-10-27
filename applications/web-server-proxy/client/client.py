@@ -1,6 +1,6 @@
 import socket
 import pickle
-import requests
+
 
 class Client(object):
     """
@@ -9,32 +9,28 @@ class Client(object):
     """
 
     def __init__(self):
-        self.init_socket()
         self.client_socket = None
+        self.proxy_msg = None
 
-    def run(self, data):
+    def init_socket(self, data):
+        host = '127.0.0.1'
+        port = 17865
+        self._connect_to_server(host, port, data)
 
-        return 0
-
-    def init_socket(self):
-        self.client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        return 0
-
-    def _connect_to_server(self, host_ip, port):
+    def _connect_to_server(self, host_ip, port, data):
         """
         Connects to server 
         remember to handle exceptions
-        :param host_ip: 
-        :param port: 
+        :param host_ip:
+        :param port:
         :return: VOID
         """
         try:
-            self.init_socket()
+            self.client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             self.client_socket.connect((host_ip, port))
-            print("Socket successfully connected")
+            self.request_to_proxy(data)
         except socket.error as err:
             print("socket connection failed with error %s" % err)
-        return 0
 
     def _send(self, data):
         """
@@ -45,7 +41,6 @@ class Client(object):
         """
         serialized_data = pickle.dumps(data)
         self.client_socket.send(serialized_data)
-        return 0
 
     def _receive(self):
         """
@@ -54,8 +49,8 @@ class Client(object):
         :return: the desirialized data 
         """
         serialized_data = self.client_socket.recv(4096)
-        data = pickle.loads(serialized_data)
-        return data
+        deserialized_data = pickle.loads(serialized_data)
+        return deserialized_data
 
     def request_to_proxy(self, data):
         """
@@ -65,8 +60,19 @@ class Client(object):
         :param data: url and private mode 
         :return: VOID
         """
-
-        return 0
+        target_hosts = data['url']
+        target_url = data['is_private_mode']
+        if "http://" not in target_hosts:
+            target_hosts = "http://" + target_hosts
+        if target_url == 1:
+            target_hosts = target_hosts + "?private=true"
+            request = "GET /%s HTTP/1.1\r\nHost: 127.0.0.1:17865\r\n\n" % target_hosts
+            # print("in request_to_proxy:"+request)
+            self._send(request)
+        else:
+            target_hosts = target_hosts + "?private=false"
+            request = "GET /%s HTTP/1.1\r\nHost: 127.0.0.1:17865\r\n\n" % target_hosts
+            self._send(request)
 
     def response_from_proxy(self):
         """
@@ -75,4 +81,11 @@ class Client(object):
         This method must be called from web_proxy_server.py which is the home page of the app
         :return: the response from the proxy server
         """
-        return 0
+        self.client_socket.listen(5)
+        while True:
+            raw_data = self._receive()
+            raw_data.find('/')
+            return "This is response proxy"
+
+    def run(self, data):
+        self.init_socket(data)
