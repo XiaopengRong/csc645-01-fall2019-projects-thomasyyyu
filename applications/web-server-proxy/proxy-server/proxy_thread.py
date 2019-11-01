@@ -4,6 +4,7 @@ Proxy thread file. Implements the proxy thread class and all its functionality.
 
 from proxy_manager import ProxyManager
 import pickle
+import random
 # IMPORTANT READ BELOW NOTES. Otherwise, it may affect negatively your grade in this assignment
 # Note about requests library
 # use this library only to make request to the original server inside the appropiate class methods
@@ -22,6 +23,8 @@ class ProxyThread(object):
         self.proxy_manager = ProxyManager()
         self.client = conn
         self.client_id = client_addr[1]
+        self.client_address = client_addr[0]
+        self.url_after_split = None
 
     def get_settings(self):
         return self.proxy_manager
@@ -33,8 +36,21 @@ class ProxyThread(object):
         and then proccess the request done by the client
         :return: VOID
         """
-
-        return 0
+        while True:
+            data_from_client_string = self.client.recv(4096)
+            data_from_client = pickle.loads(data_from_client_string)
+            if not data_from_client:
+                print("Disconnect from server")
+                break
+            first_line = data_from_client.split('\r\n')[0]
+            mode, url = first_line.split(' /')
+            self.url_after_split, rest = url.split('?')
+            is_private, http_status = rest.split(" ")
+            dic = {'mode': mode, 'url': self.url_after_split, 'param': {'private': is_private}}
+            data_from_server = self.response_from_server(dic)
+            self.send_response_to_client(data_from_server)
+            self.client.close()
+            return 0
 
     def client_id(self):
         """
@@ -49,7 +65,6 @@ class ProxyThread(object):
         This is easy if you think in terms of client-server sockets
         :return: VOID
         """
-
         return 0
 
     def process_client_request(self, data):
@@ -81,13 +96,18 @@ class ProxyThread(object):
         :param data: the response data
         :return: VOID
         """
+        my_data = pickle.dumps(data)
+        self.client.send(my_data)
+        return 0
 
     def _receive(self):
         """
         deserialize the data 
         :return: the deserialized data
         """
-        return 0
+        my_data = self.client.recv(4096)
+        data_get = pickle.loads(my_data)
+        return data_get
 
     def head_request_to_server(self, url, param):
         """
@@ -96,7 +116,17 @@ class ProxyThread(object):
         :param param: parameters to be appended to the url
         :return: the headers of the response from the original server
         """
-        return 0
+        response = requests.get(url)
+        response1 = response.headers
+        save_path = '/Users/thomasyyu/Documents/GitHub/CSC645/csc645-01-fall2019-projects-thomasyyyu/applications/web' \
+                    '-server-proxy/proxy-server/cache/resources/'
+        name_of_file = random.randint(1000, 10000)
+        complete_file = save_path + str(name_of_file) + ".txt"
+        file = open(complete_file, "w")
+        file.write(str(response1))
+        file.close()
+        print(response1)
+        return response1
 
     def get_request_to_server(self, url, param):
         """
@@ -105,7 +135,19 @@ class ProxyThread(object):
         :param param: parameters to be appended to the url
         :return: the complete response including the body of the response
         """
-        return 0
+        session = requests.Session()
+        session.headers['Connection'] = 'close'
+        session.headers['Keep-alive'] = 0
+        request = requests.get(url)
+        response = request.headers
+        save_path = '/Users/thomasyyu/Documents/GitHub/CSC645/csc645-01-fall2019-projects-thomasyyyu/applications/web' \
+                    '-server-proxy/proxy-server/cache/resources/'
+        name_of_file = random.randint(1000, 10000)
+        complete_file = save_path + str(name_of_file) + ".txt"
+        file = open(complete_file, "w")
+        file.write(str(response))
+        file.close()
+        return request
 
     def response_from_server(self, request):
         """
@@ -127,11 +169,14 @@ class ProxyThread(object):
         :param data: a response created by the proxy. Please check slides for response format
         :return: VOID
         """
+        serialized_response = pickle.dumps(data)
+        self.client.send(serialized_response)
         return 0
 
-    def create_response_for_client(self):
+    def create_response_for_client(self, data):
         """
         
         :return: the response that will be passed as a parameter to the method send_response_to_client()
         """
+
         return 0

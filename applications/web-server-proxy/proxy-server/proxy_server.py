@@ -3,13 +3,12 @@ from proxy_thread import ProxyThread
 
 
 class ProxyServer(object):
-    HOST = '127.0.0.1'
-    PORT = 17865
-    BACKLOG = 50
-    MAX_DATA_RECV = 4096
 
     def __init__(self):
-        self.clients = []
+        self.HOST = '127.0.0.1'
+        self.PORT = 17865
+        self.BACKLOG = 50
+        self.MAX_DATA_RECV = 4096
 
     def run(self):
         try:
@@ -19,9 +18,6 @@ class ProxyServer(object):
             print("Socket listening...")
             while True:
                 self.accept_clients(my_sock)
-            # create a socket
-            # associate the socket to host and port
-            # listen and accept clients
         except socket.error as message:
             print(message)
 
@@ -33,7 +29,7 @@ class ProxyServer(object):
         client_sock, addr = sock.accept()
         client_id = addr[1]
         print("Client_id is :" + str(client_id))
-        
+        self.proxy_thread(client_sock, str(client_id))
 
     def proxy_thread(self, conn, client_addr):
         """
@@ -48,7 +44,7 @@ class ProxyServer(object):
         """
         proxy_thread = ProxyThread(conn, client_addr)
         proxy_thread.init_thread()
-        return
+        return 0
 
 
 server = ProxyServer()

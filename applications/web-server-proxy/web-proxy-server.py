@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, redirect
 from client.client import Client
+import pymysql
 import requests
 
 
@@ -28,9 +29,7 @@ def get_user_input():
     client = Client()
     client.run(data)
     client.response_from_proxy()
-    #render_template(response)
     return str(data)
-
 
 if __name__ == '__main__':
     app.run()

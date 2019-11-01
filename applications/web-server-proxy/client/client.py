@@ -12,10 +12,7 @@ class Client(object):
         self.client_socket = None
         self.proxy_msg = None
 
-    def init_socket(self, data):
-        host = '127.0.0.1'
-        port = 17865
-        self._connect_to_server(host, port, data)
+    # def init_socket(self, data):
 
     def _connect_to_server(self, host_ip, port, data):
         """
@@ -32,26 +29,6 @@ class Client(object):
         except socket.error as err:
             print("socket connection failed with error %s" % err)
 
-    def _send(self, data):
-        """
-        1. Serialize data
-        2. implements the primitive send() call from the socket
-        :param data: {url: url, private_mode: True or false}
-        :return: VOID
-        """
-        serialized_data = pickle.dumps(data)
-        self.client_socket.send(serialized_data)
-
-    def _receive(self):
-        """
-        1. Implements the primitive rcv() method from socket
-        2. Desirialize data after it is recieved
-        :return: the desirialized data 
-        """
-        serialized_data = self.client_socket.recv(4096)
-        deserialized_data = pickle.loads(serialized_data)
-        return deserialized_data
-
     def request_to_proxy(self, data):
         """
         Create the request from data 
@@ -60,19 +37,28 @@ class Client(object):
         :param data: url and private mode 
         :return: VOID
         """
-        target_hosts = data['url']
-        target_url = data['is_private_mode']
-        if "http://" not in target_hosts:
-            target_hosts = "http://" + target_hosts
-        if target_url == 1:
-            target_hosts = target_hosts + "?private=true"
-            request = "GET /%s HTTP/1.1\r\nHost: 127.0.0.1:17865\r\n\n" % target_hosts
-            # print("in request_to_proxy:"+request)
-            self._send(request)
+        target_url = data['url']
+        target_mode = data['is_private_mode']
+        if "http://" not in target_url:
+            target_url = "http://" + target_url
+        if target_mode == 1:
+            target_url = target_url + "?priavte=true"
+            request = "GET /%s HTTP/1.1\r\nHost: 127.0.0.1\r\nUser-Agent: " \
+                      "Firefox/3.6.10\r\nAccept: text/html,application/xhtml+xml\r\nAccept-Language: en-us," \
+                      "en;q=0.5\r\nAccept-Encoding: gzip,deflate\r\nAccept-Charset: ISO-8859-1,utf-8;q=0.7\r\n" \
+                      "Keep-Alive: 115\r\nConnection: keep-alive\r\n\r\n" % target_url
+            data = pickle.dumps(request)
+            self.client_socket.sendall(data)
+            return 0
         else:
-            target_hosts = target_hosts + "?private=false"
-            request = "GET /%s HTTP/1.1\r\nHost: 127.0.0.1:17865\r\n\n" % target_hosts
-            self._send(request)
+            target_url = target_url + "?private=false"
+            request = "GET /%s HTTP/1.1\r\nHost: 127.0.0.1\r\nUser-Agent: " \
+                      "Firefox/3.6.10\r\nAccept: text/html,application/xhtml+xml\r\nAccept-Language: en-us," \
+                      "en;q=0.5\r\nAccept-Encoding: gzip,deflate\r\nAccept-Charset: ISO-8859-1,utf-8;q=0.7\r\n" \
+                      "Keep-Alive: 115\r\nConnection: keep-alive\r\n\r\n" % target_url
+            data = pickle.dumps(request)
+            self.client_socket.sendall(data)
+            return 0
 
     def response_from_proxy(self):
         """
@@ -81,11 +67,11 @@ class Client(object):
         This method must be called from web_proxy_server.py which is the home page of the app
         :return: the response from the proxy server
         """
-        self.client_socket.listen(5)
-        while True:
-            raw_data = self._receive()
-            raw_data.find('/')
-            return "This is response proxy"
+        data = self.client_socket.recv(1000000000)
+        de_data = pickle.loads(data)
+        return de_data
 
     def run(self, data):
-        self.init_socket(data)
+        host = '127.0.0.1'
+        port = 17865
+        self._connect_to_server(host, port, data)
