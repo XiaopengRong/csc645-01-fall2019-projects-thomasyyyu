@@ -6,7 +6,7 @@ class ProxyServer(object):
 
     def __init__(self):
         self.HOST = '127.0.0.1'
-        self.PORT = 17865
+        self.PORT = 13000
         self.BACKLOG = 50
         self.MAX_DATA_RECV = 4096
 

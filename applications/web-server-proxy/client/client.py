@@ -73,5 +73,5 @@ class Client(object):
 
     def run(self, data):
         host = '127.0.0.1'
-        port = 17865
+        port = 13000
         self._connect_to_server(host, port, data)

@@ -25,6 +25,7 @@ class ProxyThread(object):
         self.client_id = client_addr[1]
         self.client_address = client_addr[0]
         self.url_after_split = None
+        self.http_status = None
 
     def get_settings(self):
         return self.proxy_manager
@@ -45,10 +46,11 @@ class ProxyThread(object):
             first_line = data_from_client.split('\r\n')[0]
             mode, url = first_line.split(' /')
             self.url_after_split, rest = url.split('?')
-            is_private, http_status = rest.split(" ")
+            is_private, self.http_status = rest.split(" ")
             dic = {'mode': mode, 'url': self.url_after_split, 'param': {'private': is_private}}
             data_from_server = self.response_from_server(dic)
-            self.send_response_to_client(data_from_server)
+            response = self.create_response_for_client(data_from_server)
+            self.send_response_to_client(response)
             self.client.close()
             return 0
 
@@ -118,14 +120,6 @@ class ProxyThread(object):
         """
         response = requests.get(url)
         response1 = response.headers
-        save_path = '/Users/thomasyyu/Documents/GitHub/CSC645/csc645-01-fall2019-projects-thomasyyyu/applications/web' \
-                    '-server-proxy/proxy-server/cache/resources/'
-        name_of_file = random.randint(1000, 10000)
-        complete_file = save_path + str(name_of_file) + ".txt"
-        file = open(complete_file, "w")
-        file.write(str(response1))
-        file.close()
-        print(response1)
         return response1
 
     def get_request_to_server(self, url, param):
@@ -138,16 +132,11 @@ class ProxyThread(object):
         session = requests.Session()
         session.headers['Connection'] = 'close'
         session.headers['Keep-alive'] = 0
-        request = requests.get(url)
-        response = request.headers
-        save_path = '/Users/thomasyyu/Documents/GitHub/CSC645/csc645-01-fall2019-projects-thomasyyyu/applications/web' \
-                    '-server-proxy/proxy-server/cache/resources/'
-        name_of_file = random.randint(1000, 10000)
-        complete_file = save_path + str(name_of_file) + ".txt"
-        file = open(complete_file, "w")
-        file.write(str(response))
-        file.close()
-        return request
+        request = requests.get(url, stream=True)
+        response = request.raw.read()
+        status_code = request.status_code
+        header = request.headers
+        return response, status_code, header
 
     def response_from_server(self, request):
         """
@@ -178,5 +167,30 @@ class ProxyThread(object):
         
         :return: the response that will be passed as a parameter to the method send_response_to_client()
         """
-
-        return 0
+        body = data[0]
+        statue_code = data[1]
+        header = data[2]
+        if statue_code == 200:
+            status_line = self.http_status + " " + str(statue_code) + " " + "OK" + "\r\n"
+            data_line = body
+            header_line = header
+            response = status_line + str(header_line) + "\r\n\r\n" + str(data_line)
+            save_path = '/Users/thomasyyu/Documents/GitHub/CSC645/csc645-01-fall2019-projects-thomasyyyu/applications/web-server-proxy/proxy-server/cache/resources/'
+            name_of_file = random.randint(1000, 10000)
+            complete_file = save_path + str(name_of_file) + ".txt"
+            file = open(complete_file, "w")
+            file.write(str(response))
+            file.close()
+            return data
+        elif statue_code == 404:
+            status_line = self.http_status + " " + str(statue_code) + " " + "NOT FOUND" + "\r\n"
+            data_line = body
+            header_line = header
+            response = status_line + str(header_line) + "\r\n\r\n" + str(data_line)
+            save_path = '/Users/thomasyyu/Documents/GitHub/CSC645/csc645-01-fall2019-projects-thomasyyyu/applications/web-server-proxy/proxy-server/cache/resources/'
+            name_of_file = random.randint(1000, 10000)
+            complete_file = save_path + str(name_of_file) + ".txt"
+            file = open(complete_file, "w")
+            file.write(str(response))
+            file.close()
+            return data
