@@ -1,4 +1,9 @@
-# Streaming Video Server and Client. Functionality Similar to Netflix
+# Web Proxy
+
+# Instructor Comments: 
+
+Grade: 95/100
+   
    * Thomas Yu, 916984372
    * Web-proxy-server
    * send user request to server so that can get the response from server and send it back to user
