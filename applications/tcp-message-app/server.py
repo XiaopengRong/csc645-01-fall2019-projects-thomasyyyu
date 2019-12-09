@@ -9,6 +9,7 @@ global_array = {}
 sort_data = {" ": [" "]}
 client_id_name = {}
 
+
 def thread(client_sock, client_id_fm):
     while True:
         data_from_client_string = client_sock.recv(4096)
@@ -31,7 +32,7 @@ def thread(client_sock, client_id_fm):
         elif data_from_client['option'] == "3":
             if str(client_id_fm) in sort_data:
                 msgL = sort_data[str(client_id_fm)]
-                #print(msgL)
+                # print(msgL)
                 client_sock.send(pickle.dumps(msgL))
                 sort_data.pop(str(client_id_fm))
             else:
@@ -47,7 +48,7 @@ def thread(client_sock, client_id_fm):
             client_id_name[client_sock] = client_id
             sorted_data = pickle.dumps(client_id_name)
             client_sock.send(sorted_data)
-            print("Client"+client_id+" Disconned from server")
+            print("Client" + client_id + " Disconned from server")
     client_sock.close()
 
 

@@ -3,8 +3,8 @@
 from server import Server
 from client import Client
 
-class Peer(Client, Server):
 
+class Peer(Client, Server):
     # status
     PEER = 0
     SEEDER = 1
@@ -14,8 +14,8 @@ class Peer(Client, Server):
         """
         TODO: implement the class constructor
         """
-        Server.__init__(self) # inherites methods from Server class
-        Client.__init__(self) # inherites methods from Client class
+        Server.__init__(self)  # inherites methods from Server class
+        Client.__init__(self)  # inherites methods from Client class
         self.status = self.PEER
         self.chocked = False
         self.interested = False
@@ -29,11 +29,12 @@ class Peer(Client, Server):
         is similar to the server in assignment #1. So, you already know
         how to implement this connection
         Note that ip address and port comes from the announce in
-        the torrent file. So you need to parse it firt at some point
+        the torrent file. So you need to parse it first at some point
         :param ip_address:
         :param port:
         :return: the swarm object with all the info from the peers connected to the swarm
         """
+
         return None
 
     def connect_to_swarm(self, swarm):
@@ -69,7 +70,6 @@ class Peer(Client, Server):
         """
         return None
 
-
     def get_metainfo(self, torrent_path):
         """
         TODO: implement this method
@@ -96,7 +96,7 @@ class Peer(Client, Server):
         """
         pass
 
-    def send_message(self, block, start_index = -1, end_index = -1):
+    def send_message(self, block, start_index=-1, end_index=-1):
         """
         TODO: implement this method
         (1) Create a message object from the message class
@@ -114,7 +114,7 @@ class Peer(Client, Server):
         """
         pass
 
-    def recieve_message(self):
+    def receive_message(self):
         """
         TODO: implement this method
         (1) recieve the message
@@ -127,6 +127,7 @@ class Peer(Client, Server):
         (6) Start sharing the piece with other peers.
         :return: VOID
         """
+
         pass
 
     def get_top_four_peers(self):
@@ -193,4 +194,3 @@ class Peer(Client, Server):
         :return: VOID
         """
         self.interested = False
-

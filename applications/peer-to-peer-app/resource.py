@@ -4,12 +4,15 @@ This file contains the classes Resource, Piece and Block to provide
 services and functionalities needed from a resource in a swarm.
 """
 import hashlib
+import ntpath
+
 
 class Resource(object):
     """
     This class provides services to handle resources
     """
-    def __init__(self, resource_id = 0, file_path = None, file_len = 0, piece_len = 0 ):
+
+    def __init__(self, resource_id=0, file_path=None, file_len=0, piece_len=0):
         """
         TODO: complete the implementation of this constructor.
         :param resource_id: default 0
@@ -21,10 +24,9 @@ class Resource(object):
         self.resource_id = resource_id
         self.len = file_len
         self.max_piece_size = piece_len
-        self._create_pieces() # creates the file's pieces
+        self._create_pieces()  # creates the file's pieces
         self.trackers = []
         self.completed = []  # the pieces that are already completed
-
 
     def add_tracker(self, ip_address, port):
         """
@@ -35,7 +37,9 @@ class Resource(object):
         :param port:
         :return: VOID
         """
-        return None
+        announce = str(ip_address)+":"+str(port)
+        self.trackers.append(announce)
+        return 0
 
     def get_trackers(self):
         """
@@ -51,13 +55,14 @@ class Resource(object):
         """
         return self.len
 
-    def name(self):
+    def name(self, path):
         """
         TODO: implement this method
         Extract the name of the file path from the patch
         :return: the name of the file
         """
-        return None
+        head, tail = ntpath.split(path)
+        return tail
 
     def _create_pieces(self):
         """
@@ -68,8 +73,7 @@ class Resource(object):
         the left over bytes.
         :return: VOID
         """
-        self.pieces = [] # list of objects of pieces. (see Piece class)
-
+        self.pieces = []  # list of objects of pieces. (see Piece class)
 
     def get_piece(self, index):
         """
@@ -112,6 +116,7 @@ class Piece(object):
     """
     This class provides the services needed to handle pieces from a resource (file)
     """
+
     def __init__(self, data, piece_id, resource_id):
         self.data = data
         self.resource_id = resource_id
@@ -120,8 +125,7 @@ class Piece(object):
         self.hash = self._hash_sha1()
         self.completed = False
 
-
-    def _create_blocks(self, max_size = 16):
+    def _create_blocks(self, max_size=16):
         """
         TODO: implement this method
         (1) It is important here to create small chucks of data
@@ -137,7 +141,7 @@ class Piece(object):
         """
         self.blocks = []
 
-    def _hash_sha1(self, data = None):
+    def _hash_sha1(self, data=None):
         """
         Already implemented for you.
         Takes a string data, and create a sha1 hash
@@ -203,11 +207,11 @@ class Block(object):
     """
     This class implements all the services provided by a block from piece
     """
+
     def __init__(self, block_id, piece_id, resource_id):
         self.resource_id = resource_id
         self.piece_id = piece_id
         self.block_id = block_id
 
     # TODO: think about which methods you would implement in this class.
-
 

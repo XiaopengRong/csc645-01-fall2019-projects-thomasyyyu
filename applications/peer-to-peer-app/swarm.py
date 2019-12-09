@@ -3,13 +3,15 @@
 This file has the class swarm that represents a swarm
 where peers can share a resource.
 """
+
+
 class Swarm(object):
 
     def __init__(self, resource_id):
         """
         Class constructor
         """
-        self.peers = [] # the peers connected to this swarm
+        self.peers = []  # the peers connected to this swarm
         self.resource_id = resource_id
 
     def add_peer(self, peer):
@@ -18,7 +20,8 @@ class Swarm(object):
         :param peer: add the peer object
         :return: VOID
         """
-        pass
+        self.peers.append(peer)
+        return 0
 
     def delete_peer(self, peer):
         """
@@ -26,14 +29,16 @@ class Swarm(object):
         :param peer_id: the client id of the peer
         :return: VOID
         """
-        pass
+        self.peers.remove(peer)
+        return 0
 
     def peers(self):
         """
         TODO: implement this method
         :return: the list of peers connected to the swarm
         """
-        return None
+        peer_list = self.peers
+        return peer_list
 
     def resource_id(self):
         """
@@ -41,4 +46,5 @@ class Swarm(object):
         :return: the file id of the file that is being
                  shared by this swarm
         """
-        return None
+        file_id = self.resource_id()
+        return file_id

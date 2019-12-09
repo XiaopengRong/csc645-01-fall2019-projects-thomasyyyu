@@ -13,12 +13,12 @@ in the swarm)
 """
 from server import Server
 
-class Tracker(Server):
 
+class Tracker(Server):
     PORT = 12000
     IP_ADDRESS = "127.0.0.1"
 
-    def __init__(self, ip_address = None, port = 0):
+    def __init__(self, ip_address=None, port=0):
         """
         TODO: finish constructor implementation (if needed)
         If parameters ip_address and port are not set at the object creation time,
@@ -51,7 +51,9 @@ class Tracker(Server):
         :param resource_id:
         :return: VOID
         """
-        pass
+        if resource_id in self.swarms:
+            self.swarms.remove(resource_id)
+        return 0
 
     def add_peer_to_swarm(self, peer, resource_id):
         """
@@ -63,7 +65,11 @@ class Tracker(Server):
         :param resource_id:
         :return: VOID
         """
-        pass
+        if resource_id in self.swarms:
+            self.add_swarm(peer)
+        else:
+            print("resource_id did not match swarms list.")
+        return 0
 
     def change_peer_status(self, resource_id):
         """
@@ -75,7 +81,8 @@ class Tracker(Server):
         :param resource_id:
         :return: VOID
         """
-        pass
+
+        return 0
 
     def send_peers(self, peer_socket, resource_id):
         """
@@ -88,6 +95,4 @@ class Tracker(Server):
                sharing this resource
         :return: VOID
         """
-        pass
-
-
+        return 0
