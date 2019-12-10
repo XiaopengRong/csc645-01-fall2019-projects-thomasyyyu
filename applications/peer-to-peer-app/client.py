@@ -79,6 +79,8 @@ class Client(object):
         self.client_socket.close()
         return 0
 
+
+"""
     def run(self):
         self.host = '127.0.0.1'
         self.port = 17865
@@ -106,3 +108,4 @@ class Client(object):
 
 client = Client()
 client.run()
+"""

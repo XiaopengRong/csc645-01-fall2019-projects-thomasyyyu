@@ -1,0 +1,10 @@
+{
+    ’announce’: ’127.0.0.1:12000’,
+    ’info’:
+    {
+        ’name’: ’example.pdf’,
+        ’piece length’: 262144,
+        ’length’: 678301696,
+        ’pieces’: <binary SHA1 hashes>
+    }
+}

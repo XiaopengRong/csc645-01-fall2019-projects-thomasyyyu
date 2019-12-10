@@ -89,6 +89,8 @@ class Server(object):
         conn.close()
         return client_addr
 
+
+"""
     def run(self):
         print("Server Info")
         print("IP Address: " + self.host)
@@ -112,3 +114,4 @@ class Server(object):
 
 server = Server()
 server.run()
+"""
