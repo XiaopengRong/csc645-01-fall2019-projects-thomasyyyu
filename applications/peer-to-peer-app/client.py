@@ -14,8 +14,8 @@ class Client(object):
         TODO: implement this contructor
         Class contructor
         """
-        self.host = None
-        self.port = None
+        self.client_host = '127.0.0.1'
+        self.client_port = 12000
         self.client_id = None
         self.client_name = None
         self.newhost = None
@@ -31,13 +31,13 @@ class Client(object):
         :param port:
         :return: VOID
         """
-        self.host = ip_adress
-        self.port = port
+        self.client_host = ip_adress
+        self.client_port = port
         try:
-            self.client_socket.connect((self.host, self.port))
+            self.client_socket.connect((self.client_host, self.client_port))
             client_id = self.receive(self.MEMORY_ALLOCATE_SIZE)
             self.client_id = int(client_id)
-            print("Connected to server with ip address: " + self.host + " and port: " + str(self.port))
+            print("Connected to server with ip address: " + self.client_host + " and port: " + str(self.client_port))
             print("Client id assigned by server is: " + str(self.client_id))
             self.client_name = client_name
             self.send(self.client_name)
@@ -80,32 +80,3 @@ class Client(object):
         return 0
 
 
-"""
-    def run(self):
-        self.host = '127.0.0.1'
-        self.port = 17865
-        self.client_name = str(input("Enter the clientName: "))
-        self.connect(self.host, self.port, self.client_name)
-        while True:
-            self.newhost = '127.0.0.1'
-            self.newport = 12000
-            self.new_client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            self.new_client_socket.bind((self.newhost, self.newport))
-            self.new_client_socket.listen(100)
-            while True:
-                choose_d_u = input("What action are you tring to do? (Download/Upload): ")
-                if choose_d_u == "Upload":
-                    file_size = input("Please enter file size: ")
-                    file_name = input("Please enter file name: ")
-                    file_upload_speed = input("Please determine file upload speed: ")
-
-                elif choose_d_u == "Download":
-                    file_d_name = input("Please enter the file name that you want to download: ")
-                    file_download_speed = input("Please determine file download speed: ")
-                else:
-                    print("please enter corrent info.")
-                    break
-
-client = Client()
-client.run()
-"""

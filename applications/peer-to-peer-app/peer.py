@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 """ The peer """
+import socket
+
 from server import Server
 from client import Client
 
@@ -34,7 +36,7 @@ class Peer(Client, Server):
         :param port:
         :return: the swarm object with all the info from the peers connected to the swarm
         """
-
+        self.connect(ip_address, port)
         return None
 
     def connect_to_swarm(self, swarm):
@@ -81,6 +83,7 @@ class Peer(Client, Server):
         :param torrent_path:
         :return: the metainfo
         """
+
         return None
 
     def change_role(self, new_role):
@@ -194,3 +197,29 @@ class Peer(Client, Server):
         :return: VOID
         """
         self.interested = False
+
+    def run(self):
+        self.client_name = str(input("Enter the clientName: "))
+        self.connect(self.client_host, self.client_port, self.client_name)
+        while True:
+            self.newhost = '127.0.0.1'
+            self.newport = 17865
+            self.new_client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            self.new_client_socket.bind((self.newhost, self.newport))
+            self.new_client_socket.listen(100)
+            while True:
+                choose_d_u = input("What action are you tring to do? (Download/Upload): ")
+                if choose_d_u == "Upload":
+                    file_size = input("Please enter file size: ")
+                    file_name = input("Please enter file name: ")
+                    file_upload_speed = input("Please determine file upload speed: ")
+
+                elif choose_d_u == "Download":
+                    file_d_name = input("Please enter the file name that you want to download: ")
+                    file_download_speed = input("Please determine file download speed: ")
+                else:
+                    print("please enter corrent info.")
+                    break
+
+s = Peer(10,20)
+s.run()

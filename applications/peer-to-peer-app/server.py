@@ -6,10 +6,6 @@ assignment #1.
 """
 import socket
 import pickle
-from _thread import *
-import threading
-
-global_array = {}
 
 
 class Server(object):
@@ -19,8 +15,7 @@ class Server(object):
         TODO: implement this constructor
         Class contructor
         """
-        self.host = '127.0.0.1'
-        self.port = 17865
+        self.global_array = {}
         self.MAX_NUM_CONNECTIONS = 5
         self.client_id = None
         self.client_sock = None
@@ -89,29 +84,3 @@ class Server(object):
         conn.close()
         return client_addr
 
-
-"""
-    def run(self):
-        print("Server Info")
-        print("IP Address: " + self.host)
-        print("port listening: " + str(self.port))
-        print("waiting for connections...")
-        self.server_socket.bind((self.host, self.port))
-        self.listen()
-        while True:
-            try:
-                self.accept()
-                self.sendData(self.client_id)
-                deserialized_data = self.recieve(self.MAX_ALLOCATE_SIZE)
-                if self.client_id not in global_array:
-                    global_array[self.client_id] = deserialized_data
-                start_new_thread(self.threaded_client, (self.client_sock, self.client_id))
-                print("Client: " + str(self.client_id) + " has connected to this server")
-            except:
-                print("Reach the maximum number of 5 people")
-                break
-
-
-server = Server()
-server.run()
-"""

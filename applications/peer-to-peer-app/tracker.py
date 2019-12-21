@@ -11,6 +11,8 @@ in the swarm)
  sharing the resource
 
 """
+
+from _thread import *
 from server import Server
 
 
@@ -41,7 +43,7 @@ class Tracker(Server):
         """
         self.swarms.append(swarm)
 
-    def remove_swarm(self, resource_id):
+    def remove_swarm(self, peer):
         """
         TODO: implement this method
         Given a resource id, remove the swarm from the tracker
@@ -51,11 +53,10 @@ class Tracker(Server):
         :param resource_id:
         :return: VOID
         """
-        if resource_id in self.swarms:
-            self.swarms.remove(resource_id)
+        self.swarms.remove(peer)
         return 0
 
-    def add_peer_to_swarm(self, peer, resource_id):
+    def add_peer_to_swarm(self, peer):
         """
         TODO: implement this method
         Based on the resource_id provided, iterate over the
@@ -65,26 +66,25 @@ class Tracker(Server):
         :param resource_id:
         :return: VOID
         """
-        if resource_id in self.swarms:
+        if peer in self.swarms:
             self.add_swarm(peer)
         else:
             print("resource_id did not match swarms list.")
         return 0
 
-    def change_peer_status(self, resource_id):
+    def change_peer_status(self):
         """
         TODO: implement this method
         When a peers in a swarm report a change of status
         (leecher or seeder) then, get the swarm object from
         the swarm list, and update the status in the swarm of
         such peer.
-        :param resource_id:
         :return: VOID
         """
 
         return 0
 
-    def send_peers(self, peer_socket, resource_id):
+    def send_peers(self, peer_socket):
         """
         TODO: implement this method
         Iterate the swarms list, and find the one which match with
@@ -96,3 +96,32 @@ class Tracker(Server):
         :return: VOID
         """
         return 0
+
+    def run(self):
+        print("Server Info")
+        if self.ip is None:
+            self.ip = self.IP_ADDRESS
+        if self.port == 0:
+            self.port = self.PORT
+        print("IP Address: " + self.ip)
+        print("port listening: " + str(self.port))
+        print("waiting for connections...")
+        self.server_socket.bind((self.ip, self.port))
+        self.listen()
+        while True:
+            try:
+                self.accept()
+
+                self.sendData(self.client_id)
+                deserialized_data = self.recieve(self.MAX_ALLOCATE_SIZE)
+                if self.client_id not in self.global_array:
+                    self.global_array[self.client_id] = deserialized_data
+                start_new_thread(self.threaded_client, (self.client_sock, self.client_id))
+                print("Client: " + str(self.client_id) + " has connected to this server")
+            except:
+                print("Reach the maximum number of 5 people")
+                break
+
+
+server = Tracker()
+server.run()
