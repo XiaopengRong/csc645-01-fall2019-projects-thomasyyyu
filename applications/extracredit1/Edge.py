@@ -1,4 +1,3 @@
-
 class Edge(object):
 
     def __init__(self, startVertex, destVertex, weight):
