@@ -6,6 +6,8 @@ services and functionalities needed from a resource in a swarm.
 import hashlib
 import ntpath
 
+import bencode
+
 
 class Resource(object):
     """
@@ -109,6 +111,9 @@ class Resource(object):
                  Note that the key pieces will store the list of sh1a hashes from each piece
                  of the file. You can assume
         """
+        with open(file_path) as f:
+            raw_data = f.read()
+            data = bencode.bdecode(raw_data)
         return None
 
 

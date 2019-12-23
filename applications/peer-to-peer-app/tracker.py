@@ -66,7 +66,7 @@ class Tracker(Server):
         :param resource_id:
         :return: VOID
         """
-        if peer in self.swarms:
+        if peer not in self.swarms:
             self.add_swarm(peer)
         else:
             print("resource_id did not match swarms list.")
@@ -111,13 +111,12 @@ class Tracker(Server):
         while True:
             try:
                 self.accept()
-
                 self.sendData(self.client_id)
                 deserialized_data = self.recieve(self.MAX_ALLOCATE_SIZE)
-                if self.client_id not in self.global_array:
-                    self.global_array[self.client_id] = deserialized_data
+                if self.client_id not in self.global_dic:
+                    self.global_dic[self.client_id] = deserialized_data
                 start_new_thread(self.threaded_client, (self.client_sock, self.client_id))
-                print("Client: " + str(self.client_id) + " has connected to this server")
+                print("Client: " + str(deserialized_data)+" with client ID: " + str(self.client_id) + " has connected to this server")
             except:
                 print("Reach the maximum number of 5 people")
                 break

@@ -15,7 +15,7 @@ class Server(object):
         TODO: implement this constructor
         Class contructor
         """
-        self.global_array = {}
+        self.global_dic = {}
         self.MAX_NUM_CONNECTIONS = 5
         self.client_id = None
         self.client_sock = None
