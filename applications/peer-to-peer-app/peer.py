@@ -209,11 +209,11 @@ class Peer(Client, Server):
         while True:
             #self.connect_to_tracker(self.newhost, self.newport)
             self.newhost = "127.0.0.1"
-            self.newhost = 17865
+            self.newport = 17865
             self.new_client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            self.new_client_socket.bind((self.newhost, str(self.newport)))
-            self.new_client_socket.listen(100)
-
+            self.new_client_socket.bind((self.newhost, self.newport))
+            self.new_client_socket.listen(5)
+            
 
 s = Peer(10, 20)
 s.run()

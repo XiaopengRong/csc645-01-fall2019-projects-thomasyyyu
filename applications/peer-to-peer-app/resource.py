@@ -44,17 +44,9 @@ class Resource(object):
         return 0
 
     def get_trackers(self):
-        """
-        Already implemented
-        :return: the list of trackers for this resource
-        """
         return self.trackers
 
     def len(self):
-        """
-        Already implementeted
-        :return: the len of the resource
-        """
         return self.len
 
     def name(self, path):
@@ -114,7 +106,9 @@ class Resource(object):
         with open(file_path) as f:
             raw_data = f.read()
             data = bencode.bdecode(raw_data)
-        return None
+            info_hash = hashlib.sha1(bencode.bencode(data['info'])).hexdigest()
+            announce_hash = hashlib.sha1(bencode.bencode(data['announce'])).hexdigest()
+        return info_hash, announce_hash
 
 
 class Piece(object):
@@ -147,26 +141,12 @@ class Piece(object):
         self.blocks = []
 
     def _hash_sha1(self, data=None):
-        """
-        Already implemented for you.
-        Takes a string data, and create a sha1 hash
-        you need to put this hash in the torrent file
-        so, when a piece is downloaded, then hash of
-        that piece needs to be compared in irder to
-        make sure that the data is not corrupted.
-        :return: the hexadecimal representation of
-        the hash
-        """
         if not data:
             data = self.data
         hash_object = hashlib.sha1(data.encode())
         return hash_object.hexdigest()
 
     def get_hash(self):
-        """
-        Already implemented
-        :return: the hash of this piece
-        """
         return self.hash
 
     def is_equal_to(self, piece):
