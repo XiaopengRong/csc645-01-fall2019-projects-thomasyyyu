@@ -2,7 +2,6 @@
 """ The peer """
 import socket
 from _thread import *
-from resource import Resource
 from server import Server
 from client import Client
 
@@ -90,7 +89,6 @@ class Peer(Client, Server):
         :return: the metainfo
         """
 
-        self.get_metainfo()
         return None
 
     def change_role(self, new_role):
@@ -209,9 +207,11 @@ class Peer(Client, Server):
         self.client_name = str(input("Enter the clientName: "))
         self.connect(self.client_host, self.client_port, self.client_name)
         while True:
-            self.connect_to_tracker(self.newhost, self.newport)
+            #self.connect_to_tracker(self.newhost, self.newport)
+            self.newhost = "127.0.0.1"
+            self.newhost = 17865
             self.new_client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            self.new_client_socket.bind((self.newhost, self.newport))
+            self.new_client_socket.bind((self.newhost, str(self.newport)))
             self.new_client_socket.listen(100)
 
 
